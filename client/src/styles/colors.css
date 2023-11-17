@@ -1,0 +1,23 @@
+.app {
+	--foreground: 17 17 17;
+	--foreground-extreme: 0 0 0;
+
+	--background: 223 223 223;
+	--background-extreme: 255 255 255;
+}
+
+.app.dark {
+	--foreground: 223 223 223;
+	--foreground-extreme: 255 255 255;
+
+	--background: 17 17 17;
+	--background-extreme: 0 0 0;
+}
+
+* {
+	@apply text-foreground;
+}
+
+.app {
+	@apply bg-background;
+}
