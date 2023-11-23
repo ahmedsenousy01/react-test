@@ -5,23 +5,32 @@ import {
 	SubmitHandler,
 	SubmitErrorHandler,
 } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
-function warningSubmitHandler(data: Record<string, string | number | boolean>) {
+type FormValues = Record<string, string | number | boolean>;
+
+function warningSubmitHandler(data: FormValues) {
 	console.warn("Form not handled by `onSubmit`. Here is the form data: ", data);
 }
 
 const Form: FC<
 	Omit<ComponentProps<"form">, "onSubmit"> & {
-		onSubmit?: SubmitHandler<Record<string, string | number | boolean>>;
-		onError?: SubmitErrorHandler<Record<string, string | number | boolean>>;
-		model?: Record<string, string | number | boolean>;
+		onSubmit?: SubmitHandler<FormValues>;
+		onError?: SubmitErrorHandler<FormValues>;
+		model?: FormValues;
+		schema: z.ZodTypeAny
+		validationMode?: "all" | "onSubmit" | "onTouched" | "onBlur" | "onChange";
 	}
 > = (props) => {
-	const { children, model, onSubmit, ...formProps } = props;
+	const { children, model, onSubmit, schema, validationMode, ...formProps } = props;
 	const submitHandler =
-		onSubmit === undefined ? warningSubmitHandler : onSubmit;
+		onSubmit ?? warningSubmitHandler;
 
-	const methods = useForm<NonNullable<typeof model>>();
+	const methods = useForm<NonNullable<typeof model>>({
+		resolver: zodResolver(schema),
+		mode: validationMode ?? "onSubmit",
+	});
 
 	return (
 		<FormProvider {...methods}>

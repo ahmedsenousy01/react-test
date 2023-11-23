@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useFormContext } from "react-hook-form";
+import { FieldError, useFormContext } from "react-hook-form";
 
 interface TextFieldProps {
 	name: string;
@@ -8,15 +8,14 @@ interface TextFieldProps {
 }
 
 const TextField: FC<TextFieldProps> = (props) => {
-	const { register, watch, formState } = useFormContext();
-	const errors = formState.errors as Record<string, unknown>;
+	const { register, watch, formState: { errors } } = useFormContext();
 	if (props.debug) console.log(watch());
 
 	return (
 		<div>
-			<label>{props.name}</label>
-			<input {...register(props.name)}></input>
-			{errors[props.name] !== undefined && <p>There is an error</p>}
+			<label htmlFor={props.name} >{props.name}</label>
+			<input id={props.name} {...register(props.name)}></input>
+			{errors[props.name] !== undefined && <p>{(errors[props.name] as FieldError)?.message}</p>}
 		</div>
 	);
 };
